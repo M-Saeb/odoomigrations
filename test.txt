@@ -1,0 +1,5 @@
+source_ip=127.0.0.1
+  source_port=8069 #some comment
+source_master_password  =   password
+# cache_dir = /odoomigrations_cache
+  # another comment here

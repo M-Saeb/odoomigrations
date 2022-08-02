@@ -1,4 +1,7 @@
 # Odoo Migrations
+
+## <img src='https://img.icons8.com/office/344/error.png' width='20'> This project is still a work in progress
+
 This cli tools is used to automate the migrations of an odoo istance from one machine to another. It can copy the database, custom modules and even conf file.
 The simplist use of this CLI would be as followes:
 ```
