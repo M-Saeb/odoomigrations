@@ -2,19 +2,32 @@ use std::env;
 use std::fs;
 use std::collections::HashMap;
 
-// struct Server {
-//     addr: &'static str,
-//     port: &'static str,
-//     database_name: &'static str,
-//     master_password: &'static str,
-//     c_addons_path: &'static str,
-//     config_file: &'static str,
-//     ssh_username: &'static str,
-//     ssh_password: &'static str,
-// }
+#[allow(dead_code)]
+#[derive(Debug)]
+struct Server {
+    addr: Option<String>,
+    port: Option<String>,
+    database_name: Option<String>,
+    master_password: Option<String>,
+    c_addons_path: Option<String>,
+    config_file: Option<String>,
+    ssh_username: Option<String>,
+    ssh_password: Option<String>,
+}
 
-// impl Server {
-// }
+impl Server {
+    async fn run_backup_request(self) -> bool{
+        let mut full_url = "".to_string();
+        full_url.push_str( self.addr.expect("No Addres was provided").as_ref() );
+        full_url.push_str( ":" );
+        full_url.push_str( self.port.expect("No port was provided").as_ref() );
+        full_url.push_str( "/web/database/backup" );
+        let client = reqwest::Client::new();
+        let response = client.post(full_url).send().await.expect("Something wrong occurs");
+        dbg!(response);
+        return true
+    }
+}
 
 struct RunFile (String);
 
@@ -52,7 +65,6 @@ impl RunFile{
                 let cleaned_str = tmp_str_split.nth(0).unwrap().trim();
                 cleaned_str
             };
-            dbg!(&value);
             hash_map.insert(
                 String::from( key ),
                 String::from( value )
@@ -69,11 +81,38 @@ fn open_file(file_path: String) -> String{
     return contents
 }
 
-fn main(){
+fn create_source_server_struct(all_items: HashMap<String, String>) -> Server{
+    fn get_value(all_items: &HashMap<String, String>, key: &str) -> Option<String> {
+        // using a custome get_value instead of default get() because the latter returns Option<&String>
+        let value_obj = all_items.get(key);
+        match value_obj {
+            Some(value) => Some(value.to_string()),
+            None => None,
+        }
+    }
+    let server = Server{
+        addr: get_value(&all_items, "source_ip"),
+        port: get_value(&all_items, "source_port"),
+        database_name: get_value(&all_items, "source_database_name"),
+        master_password: get_value(&all_items, "source_master_password"),
+        c_addons_path: get_value(&all_items, "source_c_addons_path"),
+        config_file: get_value(&all_items, "source_config_file"),
+        ssh_username: get_value(&all_items, "source_ssh_username"),
+        ssh_password: get_value(&all_items, "ssh_password"),
+    };
+    return server
+}
+
+#[tokio::main]
+async fn main(){
     let args: Vec<String> = env::args().collect();
     let filepath = &args[1];
     let content = open_file(filepath.to_string());
     let run_file = RunFile(content);
     let all_items = run_file.all_items();
-    println!("all items are {:#?}", all_items)
+    if all_items.get("source_ip").is_some(){
+        let source_server = create_source_server_struct(all_items);
+        source_server.run_backup_request().await;
+
+    }
 }
