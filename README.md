@@ -14,8 +14,8 @@ source_database_name = main # REQUIRED !!
 source_master_password = password # REQUIRED !!
 source_c_addons_path = /custom/modules/path # optional
 source_conf_file = /etc/odoo/odoo.conf # optional
-source_ssh_username = odoo # optional, becomes required when using source_c_addons_path or source_conf_file
-source_ssh_password = odoo # optional, becomes required when using source_c_addons_path or source_conf_file
+source_ssh_username = odoo # optional, becomes required when using
+source_ssh_password = odoo # optional, becomes required when using
 
 # if you only supplied the source info than the CLI will migrate all info above to your local machine under odoomigrations_cache directory
 # more info about below
