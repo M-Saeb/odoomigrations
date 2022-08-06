@@ -1,6 +1,8 @@
 use std::env;
 use std::fs;
 use std::collections::HashMap;
+use std::fs::File;
+use std::io::Write;
 
 #[allow(dead_code)]
 #[derive(Debug)]
@@ -16,15 +18,44 @@ struct Server {
 }
 
 impl Server {
-    async fn run_backup_request(self) -> bool{
-        let mut full_url = "".to_string();
-        full_url.push_str( self.addr.expect("No Addres was provided").as_ref() );
-        full_url.push_str( ":" );
-        full_url.push_str( self.port.expect("No port was provided").as_ref() );
-        full_url.push_str( "/web/database/backup" );
+    fn _write_to_file(&self, content: &[u8], filename: String){
+        let current_directory = env::current_dir().expect("couldn't get the current directory");
+        let zip_file = current_directory.join(filename);
+        let mut file = File::create(zip_file).unwrap();
+        file.write(content).unwrap();
+
+        dbg!(&file);
+    }
+
+    async fn run_backup_request(&self) -> bool{
+        let full_url = {
+            let mut string = "".to_string();
+            string.push_str( "http://" );
+            string.push_str( self.addr.as_ref().expect("No Addres was provided") );
+            string.push_str( ":" );
+            string.push_str( self.port.as_ref().expect("No port was provided") );
+            string.push_str( "/web/database/backup" );
+            string
+        };
+        dbg!(&full_url);
+        let request_param = {
+            let master_password = self.master_password.as_ref().expect("Master Password Is Not Set").to_owned();
+            let database_name = self.database_name.as_ref().expect("Database Name Is Not Set").to_owned();
+            let params = [
+              ("master_pwd", master_password),
+              ("name", database_name),
+              ("backup_format", String::from("zip")),
+            ];
+            params
+        };
         let client = reqwest::Client::new();
-        let response = client.post(full_url).send().await.expect("Something wrong occurs");
-        dbg!(response);
+        let response = client.post(full_url)
+            .form(&request_param)
+            .send()
+            .await
+            .expect("Something wrong occurs in the call");
+        let response_body = &response.bytes().await.expect("Something went wrong");
+        self._write_to_file(response_body.as_ref(), String::from("demo_db.zip"));
         return true
     }
 }
@@ -105,6 +136,7 @@ fn create_source_server_struct(all_items: HashMap<String, String>) -> Server{
 
 #[tokio::main]
 async fn main(){
+    // let a = b"something random";
     let args: Vec<String> = env::args().collect();
     let filepath = &args[1];
     let content = open_file(filepath.to_string());
@@ -113,6 +145,5 @@ async fn main(){
     if all_items.get("source_ip").is_some(){
         let source_server = create_source_server_struct(all_items);
         source_server.run_backup_request().await;
-
     }
 }
