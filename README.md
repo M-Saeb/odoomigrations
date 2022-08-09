@@ -13,25 +13,25 @@ the file `run.conf` should contain all the needed info for migration, and should
 ```
 source_ip = 127.0.0.1 # default is 127.0.0.1
 source_port = 8069 # default is 8069
-source_database_name = main # REQUIRED !!
-source_master_password = password # REQUIRED !!
-source_c_addons_path = /custom/modules/path # optional
-source_conf_file = /etc/odoo/odoo.conf # optional
-source_ssh_username = odoo # optional, becomes required when using
-source_ssh_password = odoo # optional, becomes required when using
+source_database_name = main # if provided with source_master_password, than it'll attempt to backup the database
+source_master_password = password
+source_c_addons_path = /custom/modules/path # if provided with source_ssh_username & source_ssh_password, than it'll backup the custome modules
+source_conf_file = /etc/odoo/odoo.conf # if provided with source_ssh_username & source_ssh_password, than it'll backup the configuration file
+source_ssh_username = odoo
+source_ssh_password = odoo
 
 # if you only supplied the source info than the CLI will migrate all info above to your local machine under odoomigrations_cache directory
-# more info about below
-# once you add the dest_ip argument the CLI will attempt to push the all the files & folder to the required machine
+# more info about it below
+# once you add the dest_database_name argument the CLI will attempt to push the all the files & folder to the destination machine
 
 dest_ip = 127.0.0.1 # default is 127.0.0.1
 dest_port = 8069 # default is 8069
-dest_database_name = main_dup # REQUIRED !!
-dest_master_password = password # REQUIRED !!
-dest_c_addons_path = /custom/modules/path # optional
-dest_conf_file = /etc/odoo/odoo.conf # optional
-dest_ssh_username = odoo # optional, becomes required when using source_c_addons_path or source_conf_file
-dest_ssh_password = odoo # optional, becomes required when using source_c_addons_path or source_conf_file
+dest_database_name = main_dup # if provided with dest_master_password, than it'll attempt to restore the database
+dest_master_password = password
+dest_c_addons_path = /custom/modules/path # if provided with dest_ssh_username & dest_ssh_password, than it'll backup the custome modules
+dest_conf_file = /etc/odoo/odoo.conf # if provided with dest_ssh_username & dest_ssh_password, than it'll backup the configuration file
+dest_ssh_username = odoo
+dest_ssh_password = odoo
 ```
 
 a few other optional argument you can add are the following:
