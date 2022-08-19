@@ -1,12 +1,13 @@
 use std::env;
 use std::fs::File;
 use std::io::Write;
+use bytes::Bytes;
+use reqwest::Error;
 
 #[allow(dead_code)]
 #[derive(Debug)]
 pub struct Server {
-    pub addr: Option<String>,
-    pub port: Option<String>,
+    pub address: Option<String>,
     pub database_name: Option<String>,
     pub master_password: Option<String>,
     pub c_addons_path: Option<String>,
@@ -17,29 +18,70 @@ pub struct Server {
 
 
 impl Server {
-    fn _write_to_file(&self, content: &[u8], filename: String){
+    pub fn create_empty() -> Server{
+        return Server { 
+            address: None,
+            database_name: None,
+            master_password: None,
+            c_addons_path: None,
+            config_file_path: None,
+            ssh_username: None,
+            ssh_password: None 
+        }
+    }
+
+    fn write_to_file(&self, content: &[u8], filename: String){
         let current_directory = env::current_dir().expect("couldn't get the current directory");
         let zip_file = current_directory.join(filename);
         let mut file = File::create(zip_file).unwrap();
         file.write(content).unwrap();
-
-        dbg!(&file);
     }
 
-    pub async fn call_backup_request(&self) -> bool{
+    pub fn set_value(&mut self, key: String, value: String){
+        if String::from("address") == key {
+            self.address = Some(value);
+            return
+        }
+        if String::from("database_name") == key {
+            self.database_name = Some(value);
+            return
+        }
+        if String::from("master_password") == key {
+            self.master_password = Some(value);
+            return
+        }
+        if String::from("c_addons_path") == key {
+            self.c_addons_path = Some(value);
+            return
+        }
+        if String::from("config_file_path") == key {
+            self.config_file_path = Some(value);
+            return
+        }
+        if String::from("ssh_username") == key {
+            self.ssh_username = Some(value);
+            return
+        }
+        if String::from("ssh_password") == key {
+            self.ssh_password = Some(value);
+            return
+        } 
+
+        panic!("That shouldn't have happned with {}", key);            
+
+    }
+
+    pub async fn call_database_backup_request(&self) -> Result<Bytes, Error>{
         let full_url = {
             let mut string = "".to_string();
-            string.push_str( "http://" );
-            string.push_str( self.addr.as_ref().expect("No Addres was provided") );
-            string.push_str( ":" );
-            string.push_str( self.port.as_ref().expect("No port was provided") );
+            string.push_str( self.address.to_owned().expect("No Addres was provided").as_ref() );
             string.push_str( "/web/database/backup" );
             string
         };
         dbg!(&full_url);
         let request_param = {
-            let master_password = self.master_password.as_ref().expect("Master Password Is Not Set").to_owned();
-            let database_name = self.database_name.as_ref().expect("Database Name Is Not Set").to_owned();
+            let master_password = self.master_password.to_owned().expect("No Master Password was provided");
+            let database_name = self.database_name.to_owned().expect("No Database Name was provided");
             [
               ("master_pwd", master_password),
               ("name", database_name),
@@ -52,8 +94,7 @@ impl Server {
             .send()
             .await
             .expect("Something wrong occurs in the call");
-        let response_body = &response.bytes().await.expect("Something went wrong");
-        self._write_to_file(response_body.as_ref(), String::from("demo_db.zip"));
-        return true
+        let response_body = &response.bytes().await.expect("The odoo response was not correct");
+        return Ok(response_body.to_owned())
     }
 }

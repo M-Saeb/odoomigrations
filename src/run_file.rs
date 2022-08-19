@@ -1,54 +1,86 @@
 use std::fs;
-use std::collections::HashMap;
+use super::server::Server;
+use super::mode_section::ModeSection;
 
-pub struct RunFile (pub String);
+#[derive(Debug)]
+pub struct RunFile{
+    content: String,
+    mode_section: ModeSection,
+    source_server: Server,
+    destination_server: Server,
+}
 
 impl RunFile{
-	pub fn open_file(filepath: &str) -> Self{
+	pub fn from_file(filepath: &str) -> Self{
 		let contents = fs::read_to_string(filepath).expect("Something went wrong reading the file");
-		let run_file = RunFile(contents);
+		let mut run_file = RunFile{
+            content: contents,
+            mode_section: ModeSection::create_default_mode(),
+            source_server: Server::create_empty(),
+            destination_server: Server::create_empty()
+        };
+        run_file.prepare();
+        dbg!(&run_file);
 	    return run_file
 	}
 
-    fn _clean_line(&self, line: String) -> Option<String>{
-        let cleaned_line = line.trim();
-        if cleaned_line.len() == 0 || cleaned_line.starts_with("#"){
-            return None
-        }
-        if cleaned_line.contains("#"){ // removing inline_comment
-            let mut splitted_line = cleaned_line.split("#");
-            let str_value = splitted_line.nth(0).expect("Somehting went wrong, please solve it");
-            return Some( String::from(str_value) )
-        } else {
-            return Some( String::from(cleaned_line) )
-        }
-    }
-
-    pub fn all_items(&self) -> HashMap<String, String>{
-        let mut hash_map = HashMap::new();
-        let splitted_lines = self.0.split("\n");
-        for line in splitted_lines{
-            let clean_line = self._clean_line( String::from(line) );
-            if clean_line.is_none(){
-                continue;
+    // TODO: this needs a lot of cleaning exception handeling
+    fn prepare(&mut self){
+        fn _clean_line(line: String) -> Option<String>{
+            let cleaned_line = line.trim();
+            if cleaned_line.len() == 0 || cleaned_line.starts_with("#"){
+                return None
             }
-            let line = clean_line.unwrap();
-            let mut line_split = line.split("=");
-            let key = line_split.nth(0).unwrap().trim();
-            let value = {
-                let mut exception_msg = "Incorrect line format on ".to_owned();
-                exception_msg.push_str(&line);
-                let uncleaned_value = line_split.nth(0).expect(&exception_msg);
-                let mut uncleaned_value_split = uncleaned_value.split("#");
-                let cleaned_value = uncleaned_value_split.nth(0).unwrap().trim();
-                cleaned_value
-            };
-            hash_map.insert(
-                String::from( key ),
-                String::from( value )
-            );
+            if cleaned_line.contains("#"){ // removing inline_comment
+                let mut splitted_line = cleaned_line.split("#");
+                let str_value = splitted_line.nth(0).expect("Somehting went wrong, please solve it");
+                return Some( String::from(str_value) )
+            } else {
+                return Some( String::from(cleaned_line) )
+            }
         }
-        hash_map
+
+        fn is_mode_line(line: &String) -> bool{
+            return line.starts_with("[") && line.ends_with("]")
+        }
+
+        fn get_section_name(line: &String) -> String{
+            let line_str = line.as_str();
+            let line_without_brackets = &line_str[1..line_str.len()-1];
+            line_without_brackets.trim().to_string()
+        }
+
+        let splitted_lines = self.content.split("\n");
+        let mut current_section_option: Option<String> = None;
+        for line in splitted_lines{
+            let cleaned_line_option = _clean_line(line.to_string());
+            if cleaned_line_option.is_none(){
+                continue
+            }
+            let clean_line: String = cleaned_line_option.unwrap();
+            if is_mode_line(&clean_line){
+                // switching to new section
+                let section_name = get_section_name(&clean_line);
+                current_section_option.replace( section_name );
+                continue;
+            } else {
+                let mut splitted_line = clean_line.split("=");
+                let key: String = splitted_line.nth(0).expect("this shouldn't have happend").trim().to_string();
+                let value: String = splitted_line.nth(0).expect("invalid line format").trim().to_string();
+                let current_section = current_section_option.as_ref().expect("No mode was set").as_str();
+                if current_section == "mode"{
+                    self.mode_section.set_value(key, value);
+                    continue
+                }
+                if current_section == "source"{
+                    self.source_server.set_value(key, value);
+                    continue
+                }
+                if current_section == "destination"{
+                    self.destination_server.set_value(key, value);
+                    continue
+                }
+            }
+        }
     }
-    
 }

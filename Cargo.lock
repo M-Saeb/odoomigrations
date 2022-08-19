@@ -447,6 +447,7 @@ dependencies = [
 name = "odoomigration"
 version = "0.1.0"
 dependencies = [
+ "bytes",
  "futures",
  "reqwest",
  "tokio",
