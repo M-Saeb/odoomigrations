@@ -20,7 +20,6 @@ impl RunFile{
             destination_server: Server::create_empty()
         };
         run_file.prepare();
-        dbg!(&run_file);
 	    return run_file
 	}
 
@@ -81,6 +80,13 @@ impl RunFile{
                     continue
                 }
             }
+        }
+    }
+
+    pub async fn process_source_machine_backup(&self){
+        let bytes_database = self.source_server.call_database_backup_request().await;
+        if bytes_database.is_ok(){
+            self.mode_section.write_bytes_to_cache_dir("database.zip", &bytes_database.unwrap());
         }
     }
 }

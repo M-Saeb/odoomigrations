@@ -1,19 +1,16 @@
-use std::env;
-use std::fs::File;
-use std::io::Write;
 use bytes::Bytes;
 use reqwest::Error;
 
 #[allow(dead_code)]
 #[derive(Debug)]
 pub struct Server {
-    pub address: Option<String>,
-    pub database_name: Option<String>,
-    pub master_password: Option<String>,
-    pub c_addons_path: Option<String>,
-    pub config_file_path: Option<String>,
-    pub ssh_username: Option<String>,
-    pub ssh_password: Option<String>,
+    address: Option<String>,
+    database_name: Option<String>,
+    master_password: Option<String>,
+    c_addons_path: Option<String>,
+    config_file_path: Option<String>,
+    ssh_username: Option<String>,
+    ssh_password: Option<String>,
 }
 
 
@@ -28,13 +25,6 @@ impl Server {
             ssh_username: None,
             ssh_password: None 
         }
-    }
-
-    fn write_to_file(&self, content: &[u8], filename: String){
-        let current_directory = env::current_dir().expect("couldn't get the current directory");
-        let zip_file = current_directory.join(filename);
-        let mut file = File::create(zip_file).unwrap();
-        file.write(content).unwrap();
     }
 
     pub fn set_value(&mut self, key: String, value: String){
@@ -75,10 +65,9 @@ impl Server {
         let full_url = {
             let mut string = "".to_string();
             string.push_str( self.address.to_owned().expect("No Addres was provided").as_ref() );
-            string.push_str( "/web/database/backup" );
+            string.push_str( "/web/database/backup/" );
             string
         };
-        dbg!(&full_url);
         let request_param = {
             let master_password = self.master_password.to_owned().expect("No Master Password was provided");
             let database_name = self.database_name.to_owned().expect("No Database Name was provided");
@@ -89,6 +78,7 @@ impl Server {
             ]
         };
         let client = reqwest::Client::new();
+        dbg!(&full_url);
         let response = client.post(full_url)
             .form(&request_param)
             .send()
@@ -97,4 +87,5 @@ impl Server {
         let response_body = &response.bytes().await.expect("The odoo response was not correct");
         return Ok(response_body.to_owned())
     }
+
 }
