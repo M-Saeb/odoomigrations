@@ -5,7 +5,7 @@ use super::mode_section::ModeSection;
 #[derive(Debug)]
 pub struct RunFile{
     content: String,
-    mode_section: ModeSection,
+    pub mode_section: ModeSection,
     source_server: Server,
     destination_server: Server,
 }
