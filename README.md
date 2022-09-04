@@ -16,7 +16,7 @@ cache_dir = odoomigrations_cache # default is odoomigrations_cache, more info ab
 db_migrate_method = local # default is local, more info about below
 
 [source]
-address = 127.0.0.1 # default is 127.0.0.1. you on provide an IP address URL link
+address = 127.0.0.1 # default is 127.0.0.1:8069. you on provide an IP address URL link
 database_name = main # required if you wish to backup database
 master_password = password # required if you wish to backup database
 c_addons_path = /custom/modules/path # required if you wish to backup custom modules

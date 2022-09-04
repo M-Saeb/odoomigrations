@@ -1,25 +1,19 @@
-# valid 
+# invalid db_migrate_method value
 
 [mode]
-
-
-cache_dir = test_odoomigrations_cache
-db_migrate_method   =  local
+cache_dir = odoomigrations_cache
+db_migrate_method = invalid_value
 
 [source]
-   address = http://62.67.200.64:8069
+address = http://62.67.200.64:8069
 database_name = demo   
-  master_password = 8CC2&2@37dKt    
-
-
+master_password = 8CC2&2@37dKt    
 c_addons_path = /custom/modules/path
 config_file_path = /etc/odoo/odoo.conf
 ssh_username = odoo
 ssh_password = odoo
+
 [destination]
-
-
-
 address = 127.0.0.1
 database_name = main_dup
 master_password = password

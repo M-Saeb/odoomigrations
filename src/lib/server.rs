@@ -4,20 +4,20 @@ use reqwest::Error;
 #[allow(dead_code)]
 #[derive(Debug)]
 pub struct Server {
-    address: Option<String>,
-    database_name: Option<String>,
-    master_password: Option<String>,
-    c_addons_path: Option<String>,
-    config_file_path: Option<String>,
-    ssh_username: Option<String>,
-    ssh_password: Option<String>,
+    pub address: Option<String>,
+    pub database_name: Option<String>,
+    pub master_password: Option<String>,
+    pub c_addons_path: Option<String>,
+    pub config_file_path: Option<String>,
+    pub ssh_username: Option<String>,
+    pub ssh_password: Option<String>,
 }
 
 
 impl Server {
-    pub fn create_empty() -> Server{
+    pub fn default_server() -> Server{
         return Server { 
-            address: None,
+            address: Some("127.0.0.1:8069".to_string()),
             database_name: None,
             master_password: None,
             c_addons_path: None,
