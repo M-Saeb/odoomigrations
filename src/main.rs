@@ -1,9 +1,7 @@
-mod server;
-mod run_file;
-mod mode_section;
+mod lib;
 
+use lib::run_file::RunFile;
 use std::env;
-use run_file::RunFile;
 
 #[tokio::main]
 async fn main(){
