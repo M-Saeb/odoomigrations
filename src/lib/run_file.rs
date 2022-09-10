@@ -6,8 +6,8 @@ use super::mode_section::ModeSection;
 pub struct RunFile{
     content: String,
     pub mode_section: ModeSection,
-    source_server: Server,
-    destination_server: Server,
+    pub source_server: Server,
+    pub destination_server: Server,
 }
 
 impl RunFile{
@@ -16,8 +16,8 @@ impl RunFile{
 		let mut run_file = RunFile{
             content: contents,
             mode_section: ModeSection::create_default_mode(),
-            source_server: Server::create_empty(),
-            destination_server: Server::create_empty()
+            source_server: Server::default_server(),
+            destination_server: Server::default_server()
         };
         run_file.prepare();
 	    return run_file
@@ -66,7 +66,7 @@ impl RunFile{
                 let mut splitted_line = clean_line.split("=");
                 let key: String = splitted_line.nth(0).expect("this shouldn't have happend").trim().to_string();
                 let value: String = splitted_line.nth(0).expect("invalid line format").trim().to_string();
-                let current_section = current_section_option.as_ref().expect("No mode was set").as_str();
+                let current_section = current_section_option.as_ref().expect("Invalid run file format").as_str();
                 if current_section == "mode"{
                     self.mode_section.set_value(key, value);
                     continue

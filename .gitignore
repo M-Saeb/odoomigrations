@@ -1,3 +1,5 @@
 /target
+.vscode
 demo.txt
 odoomigrations_cache
+test_odoomigrations_cache/

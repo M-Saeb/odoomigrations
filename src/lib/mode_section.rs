@@ -24,6 +24,7 @@ impl ModeSection{
 			return
 		}
 		if key.as_str() == "db_migrate_method"{
+			assert!(["local", "direct"].contains(&value.as_str()), "Invalid value for db_migrate_method. Can only assign 'local' or 'direct'");
 			self.db_migrate_method = value;
 			return
 		}
