@@ -1,4 +1,4 @@
-# valid file missing all fields with default values
+# a valid file missing all fields with default values
 
 [source]
 database_name = demo   

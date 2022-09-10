@@ -14,6 +14,7 @@ the file `run.conf` should contain all the needed info for migration, and should
 [mode]
 cache_dir = odoomigrations_cache # default is odoomigrations_cache, more info about it below
 db_migrate_method = local # default is local, more info about below
+log = true # default is true, more info about below
 
 [source]
 address = 127.0.0.1 # default is 127.0.0.1:8069. you on provide an IP address URL link
@@ -44,7 +45,8 @@ a few other optional argument you can add are the following:
 	|
 	| - db.zip
 	| - c_addons
-	L - file.conf
+	| - file.conf
+	L - migration.log
 ```
 - by adding the `cache_dir` and makeing sure its in the proper format, you can start uploading to the destination machine without the need to download again from the source machine.
 - if you wish to change the `odoomigrations_cache` path you can use the following format:
@@ -64,3 +66,7 @@ to decide the preferable migration method for you
 - `direct`: run all the commands from the destination database, so that downloading the custom modules, configuration file happends directly to the wanted destination
 - - when selecting this method, addin the `dest_ssh_username` and `dest_ssh_password` becomes required
 - - incase the migrations failed midway with this method, there is not way to revert what was downloaded and changed, so use it with caution
+
+## `log`
+when set to true, it'll log the steps the the CLI took in the `odoomigrations_cache` path with the file name `migration.log`
+when set to anything else, no log will be made

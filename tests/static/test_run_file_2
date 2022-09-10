@@ -1,4 +1,4 @@
-# invalid format with mode keys before "[mode]" line
+# an invalid file with mode keys before "[mode]" line
 
 cache_dir = odoomigrations_cache
 db_migrate_method = notlocal

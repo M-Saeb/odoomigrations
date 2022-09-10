@@ -1,4 +1,4 @@
-# invalid db_migrate_method value
+# an ininvalid file with db_migrate_method value
 
 [mode]
 cache_dir = odoomigrations_cache

@@ -7,7 +7,7 @@ fn test_file_1() {
     assert_eq!(run_file.mode_section.cache_dir, "test_odoomigrations_cache"); 
     assert_eq!(run_file.mode_section.db_migrate_method, "local"); 
     assert_eq!(
-        run_file.source_server.address.expect("address should have it's value set"),
+        run_file.source_server.address,
         "http://62.67.200.64:8069"
     ); 
     assert_eq!(
@@ -35,7 +35,7 @@ fn test_file_1() {
         "odoo"
     ); 
     assert_eq!(
-        run_file.destination_server.address.expect("address should have it's value set"),
+        run_file.destination_server.address,
         "127.0.0.1"
     );
     assert_eq!(
@@ -82,7 +82,7 @@ fn test_file_4() {
     assert_eq!(run_file.mode_section.cache_dir, "odoomigrations_cache"); 
     assert_eq!(run_file.mode_section.db_migrate_method, "local"); 
     assert_eq!(
-        run_file.source_server.address.expect("address should have it's value set"),
+        run_file.source_server.address,
         "127.0.0.1:8069"
     ); 
     assert_eq!(
@@ -110,7 +110,7 @@ fn test_file_4() {
         "odoo"
     ); 
     assert_eq!(
-        run_file.destination_server.address.expect("address should have it's value set"),
+        run_file.destination_server.address,
         "127.0.0.1:8069"
     );
     assert_eq!(
