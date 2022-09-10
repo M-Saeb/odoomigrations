@@ -8,6 +8,7 @@ use std::path::PathBuf;
 pub struct ModeSection{
 	pub cache_dir: String,
 	pub db_migrate_method: String,
+	pub should_log: bool
 }
 
 impl ModeSection{
@@ -15,6 +16,7 @@ impl ModeSection{
 		return ModeSection{
             cache_dir: "odoomigrations_cache".to_string(),
             db_migrate_method: "local".to_string(),
+			should_log: true,
 		}
 	}
 
@@ -26,6 +28,14 @@ impl ModeSection{
 		if key.as_str() == "db_migrate_method"{
 			assert!(["local", "direct"].contains(&value.as_str()), "Invalid value for db_migrate_method. Can only assign 'local' or 'direct'");
 			self.db_migrate_method = value;
+			return
+		}
+		if key.as_str() == "log"{
+			assert!(["true", "false"].contains(&value.as_str()), "Invalid value for db_migrate_method. Can only assign 'local' or 'direct'");
+			self.should_log = match value.to_lowercase().as_str() {
+				"true" => true,
+				_ => false,
+			};
 			return
 		}
 		panic!("{} is invalid mode key", key)

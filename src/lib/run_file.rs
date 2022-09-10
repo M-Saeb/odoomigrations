@@ -1,6 +1,14 @@
 use std::fs;
 use super::server::Server;
 use super::mode_section::ModeSection;
+use std::error::Error;
+
+use log::LevelFilter;
+use log;
+use log4rs::append::file::FileAppender;
+use log4rs::encode::pattern::PatternEncoder;
+use log4rs::config::{Appender, Config, Root};
+
 
 #[derive(Debug)]
 pub struct RunFile{
@@ -20,6 +28,7 @@ impl RunFile{
             destination_server: Server::default_server()
         };
         run_file.prepare();
+        run_file.setup_log4rs();
 	    return run_file
 	}
 
@@ -43,15 +52,15 @@ impl RunFile{
             return line.starts_with("[") && line.ends_with("]")
         }
 
-        fn get_section_name(line: &String) -> String{
+        fn remove_square_brackets(line: &String) -> String{
             let line_str = line.as_str();
             let line_without_brackets = &line_str[1..line_str.len()-1];
             line_without_brackets.trim().to_string()
         }
 
-        let splitted_lines = self.content.split("\n");
+        let lines = self.content.split("\n");
         let mut current_section_option: Option<String> = None;
-        for line in splitted_lines{
+        for line in lines{
             let cleaned_line_option = _clean_line(line.to_string());
             if cleaned_line_option.is_none(){
                 continue
@@ -59,12 +68,12 @@ impl RunFile{
             let clean_line: String = cleaned_line_option.unwrap();
             if is_mode_line(&clean_line){
                 // switching to new section
-                let section_name = get_section_name(&clean_line);
+                let section_name = remove_square_brackets(&clean_line);
                 current_section_option.replace( section_name );
                 continue;
             } else {
                 let mut splitted_line = clean_line.split("=");
-                let key: String = splitted_line.nth(0).expect("this shouldn't have happend").trim().to_string();
+                let key: String = splitted_line.nth(0).expect("this shouldn't have happend !?").trim().to_string();
                 let value: String = splitted_line.nth(0).expect("invalid line format").trim().to_string();
                 let current_section = current_section_option.as_ref().expect("Invalid run file format").as_str();
                 if current_section == "mode"{
@@ -83,10 +92,27 @@ impl RunFile{
         }
     }
 
-    pub async fn process_source_machine_backup(&self){
-        let bytes_database = self.source_server.call_database_backup_request().await;
-        if bytes_database.is_ok(){
-            self.mode_section.write_bytes_to_cache_dir("database.zip", &bytes_database.unwrap());
-        }
+    fn setup_log4rs(&self) -> Result<(), Box<dyn Error>> {
+        let full_path = self.mode_section.cache_dir.to_owned() + "/output.log";
+        let logfile = FileAppender::builder()
+            .encoder(Box::new(PatternEncoder::new("{d} - {l} - {m}\n")))
+            .build(full_path)?;
+    
+        let config = Config::builder()
+            .appender(Appender::builder().build("logfile", Box::new(logfile)))
+            .build(Root::builder()
+                       .appender("logfile")
+                       .build(LevelFilter::Info))?;
+    
+        log4rs::init_config(config)?;
+    
+        log::info!("Fuck Yeah!");
+    
+        Ok(())
+    }
+
+    pub async fn run_proces(&self){
+        self.mode_section.creat_cache_dir();
+        self.source_server.run_full_backup_process(&self.mode_section).await;
     }
 }

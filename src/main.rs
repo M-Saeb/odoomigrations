@@ -11,5 +11,5 @@ async fn main(){
     }
     let filepath = &args[1];
     let run_file = RunFile::from_file(filepath);
-    run_file.process_source_machine_backup().await;
+    run_file.run_proces().await;
 }
