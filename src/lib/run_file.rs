@@ -105,9 +105,7 @@ impl RunFile{
                        .build(LevelFilter::Info))?;
     
         log4rs::init_config(config)?;
-    
-        log::info!("Fuck Yeah!");
-    
+        
         Ok(())
     }
 

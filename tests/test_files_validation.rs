@@ -8,19 +8,23 @@ fn test_file_1() {
     assert_eq!(run_file.mode_section.db_migrate_method, "local"); 
     assert_eq!(
         run_file.source_server.address,
-        "http://62.67.200.64:8069"
-    ); 
+        "http://62.67.200.64"
+    );
+    assert_eq!(
+        run_file.source_server.port,
+        "8069"
+    );
     assert_eq!(
         run_file.source_server.database_name.expect("database_name should have it's value set"),
         "demo"
-    ); 
+    );
     assert_eq!(
         run_file.source_server.master_password.expect("master_password should have it's value set"),
         "8CC2&2@37dKt"
     ); 
     assert_eq!(
         run_file.source_server.c_addons_path.expect("c_addons_path should have it's value set"),
-        "/custom/modules/path"
+        "/usr/lib/python3/dist-packages/odoo/c-addons"
     ); 
     assert_eq!(
         run_file.source_server.config_file_path.expect("config_file_path should have it's value set"),
@@ -28,11 +32,11 @@ fn test_file_1() {
     ); 
     assert_eq!(
         run_file.source_server.ssh_username.expect("ssh_username should have it's value set"),
-        "odoo"
+        "root"
     ); 
     assert_eq!(
         run_file.source_server.ssh_password.expect("ssh_password should have it's value set"),
-        "odoo"
+        "root"
     ); 
     assert_eq!(
         run_file.destination_server.address,
@@ -83,8 +87,12 @@ fn test_file_4() {
     assert_eq!(run_file.mode_section.db_migrate_method, "local"); 
     assert_eq!(
         run_file.source_server.address,
-        "127.0.0.1:8069"
-    ); 
+        "127.0.0.1"
+    );
+    assert_eq!(
+        run_file.source_server.port,
+        "8069"
+    );
     assert_eq!(
         run_file.source_server.database_name.expect("database_name should have it's value set"),
         "demo"
@@ -111,7 +119,7 @@ fn test_file_4() {
     ); 
     assert_eq!(
         run_file.destination_server.address,
-        "127.0.0.1:8069"
+        "127.0.0.1"
     );
     assert_eq!(
         run_file.destination_server.database_name.expect("database_name should have it's value set"),

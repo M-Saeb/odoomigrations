@@ -25,7 +25,7 @@ async fn test_file_1_sequence(){
 		.contains("successfuly backeduped database for source server"),
 		"line contain wrong value"
 	);
-	assert!(Path::new("test_odoomigrations_cache/db.zip").exists(), "database file was not found");
+	assert!(Path::new("test_odoomigrations_cache/database.zip").exists(), "database file was not found");
 	assert!(
 		lines.nth(0).expect("Line was not created")
 		.contains("ran scp for source server c_addons"),
@@ -36,7 +36,7 @@ async fn test_file_1_sequence(){
 		.contains("downloaded source server c_addons"),
 		"line contain wrong value"
 	);
-	assert!(Path::new("test_odoomigrations_cache/c_addons").exists(), "c_addons folder was not found");
+	assert!(Path::new("test_odoomigrations_cache/c_addons.zip").exists(), "c_addons.zip file was not found");
 	assert!(
 		lines.nth(0).expect("Line was not created")
 		.contains("ran scp for source server config_file"),

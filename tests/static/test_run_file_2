@@ -5,7 +5,8 @@ db_migrate_method = notlocal
 [mode]
 
 [source]
-address = http://62.67.200.64:8069
+address = http://62.67.200.64
+port = 8069
 database_name = demo   
 master_password = 8CC2&2@37dKt    
 c_addons_path = /custom/modules/path

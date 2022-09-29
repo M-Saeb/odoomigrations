@@ -5,7 +5,7 @@ cache_dir = odoomigrations_cache
 db_migrate_method = invalid_value
 
 [source]
-address = http://62.67.200.64:8069
+address = http://62.67.200.64
 database_name = demo   
 master_password = 8CC2&2@37dKt    
 c_addons_path = /custom/modules/path

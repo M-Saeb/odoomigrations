@@ -1,5 +1,5 @@
+use log;
 use std::env;
-use std::fs;
 use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
@@ -44,7 +44,7 @@ impl ModeSection{
 	pub fn creat_cache_dir(&self) -> PathBuf{
 		let current_dir = env::current_dir().expect("Could not fetch current directory");
 		let full_cache_dir = current_dir.join(&self.cache_dir);
-		fs::create_dir(&full_cache_dir);	
+        log::info!("created local cache directory named {}", self.cache_dir);
 		full_cache_dir
 	}
 

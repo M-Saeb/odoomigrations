@@ -8,15 +8,16 @@ db_migrate_method   =  local
 log = true
 
 [source]
-   address = http://62.67.200.64:8069
+   address = http://62.67.200.64
+      port = 8069
 database_name = demo   
-  master_password = 8CC2&2@37dKt    
+  master_password = 8CC2&2@37dKt   
 
 
-c_addons_path = /custom/modules/path
+c_addons_path = /usr/lib/python3/dist-packages/odoo/c-addons
 config_file_path = /etc/odoo/odoo.conf
-ssh_username = odoo
-ssh_password = odoo
+ssh_username = root
+ssh_password = root
 [destination]
 
 
