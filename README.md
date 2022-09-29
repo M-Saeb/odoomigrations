@@ -17,7 +17,8 @@ db_migrate_method = local # default is local, more info about below
 log = true # default is true, more info about below
 
 [source]
-address = 127.0.0.1 # default is 127.0.0.1:8069. you on provide an IP address URL link
+address = 127.0.0.1 # default is 127.0.0.1 only IP address are supported at the moment
+port = 80 # default is 8069
 database_name = main # required if you wish to backup database
 master_password = password # required if you wish to backup database
 c_addons_path = /custom/modules/path # required if you wish to backup custom modules
@@ -27,6 +28,7 @@ ssh_password = odoo required if you wish to backup custom modules or onconfigura
 
 [destination]
 address = 127.0.0.1 # same as source "address" option
+port = 8069
 database_name = main_dup # required if you wish to upload database backup
 master_password = password # required if you wish to upload database backup
 c_addons_path = /custom/modules/path # required if you wish to upload custom modules
